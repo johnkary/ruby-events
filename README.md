@@ -16,15 +16,22 @@ code for such an implementation.
 There are a few existing gems that tackle events already, and I'll try them
 out in different "attempt" directories within this repository.
 
-## Attempt 1 - Custom Implementation
+## Attempt 1 - My Custom Implementation
 
-This is all custom code I've written to implement the Observer design
+This is a custom proof of concept I've written to implement the Observer
 pattern in Ruby. I based it off of an implementation I'm familiar with from
 working with the PHP library [Symfony2 Event Dispatcher](http://symfony.com/doc/current/components/event_dispatcher/introduction.html#the-dispatcher).
 There may be "a more Ruby-way" to do things, of which I'm still ignorant of.
 
 This is my first Ruby thing ever, and it was mostly an exercise in learning
 but also in showing a concept others found interesting from the KC Ruby group.
+
+Supports:
+
+* Dispatch named events
+* Registering listeners to handle events as:
+    * Object instance methods
+    * Procs
 
 To run:
 
