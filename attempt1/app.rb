@@ -11,12 +11,16 @@ class EventDispatcher
   end
 
   def notify(name, event)
-    return true if @storage.empty? or !@storage.has_key?(name)
+    return false if !self.has_callbacks_for?(name)
 
     # Get all callbacks of this name
     for callback in @storage[name]
       callback.call(event, self)
     end
+  end
+
+  def has_callbacks_for?(name)
+    @storage.has_key?(name) or !@storage.empty?
   end
 end
 
