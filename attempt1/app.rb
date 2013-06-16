@@ -13,17 +13,26 @@ class EventDispatcher
   def notify(name, event)
     return false if !self.has_callbacks_for?(name)
 
-    # Get all callbacks of this name
+    # Execute all callbacks of this name
     for callback in @storage[name]
-      callback.call(event, self)
+      if callback.instance_of? Array
+        self.call_instance_method(callback.first, callback.last)
+      else
+        callback.call(event, self) if callback.instance_of? Proc
+      end
     end
   end
 
   def has_callbacks_for?(name)
     @storage.has_key?(name) or !@storage.empty?
   end
+
+  def call_instance_method(object, method)
+    object.__send__(method)
+  end
 end
 
+# Our plain old Ruby object from our domain model
 class Post
   attr_accessor :author, :title, :body
 
@@ -32,6 +41,7 @@ class Post
   end
 end
 
+# Event object passed to each callback
 class PostEvent
   attr :post
 
@@ -40,8 +50,16 @@ class PostEvent
   end
 end
 
+# Constants for our event names
 class PostEvents
   CREATE = 'post.create'
+end
+
+# Some service class
+class Emailer
+  def send_some_email
+    puts "Spam email from an instance method!"
+  end
 end
 
 # Setup the EventDispatcher
@@ -63,6 +81,9 @@ dispatcher.register(PostEvents::CREATE, Proc.new {|event, dispatcher|
 dispatcher.register('chained.event', Proc.new {|event, dispatcher|
   puts 'Chained event was called too!'
 })
+
+# Common use case: call instance method on a service object
+dispatcher.register(PostEvents::CREATE, [Emailer.new, :send_some_email])
 
 
 # Imagine this were a Controller method if your web app...
